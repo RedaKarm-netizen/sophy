@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>صدقة جارية - صبحي عبدالله</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --gold:       #C9A84C;
+      --gold-light: #E8D08A;
+      --dark:       #111318;
+      --dark-card:  #1a1d24;
+      --text:       #F0EAD6;
+      --text-muted: #8a8070;
+    }
+
+    body {
+      background: var(--dark);
+      color: var(--text);
+      font-family: 'Cairo', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 50px 20px 100px;
+      text-align: center;
+      overflow-x: hidden;
+    }
+
+    /* ── BACKGROUND ANIMATION ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background:
+        radial-gradient(ellipse 80% 60% at 20% 20%, #C9A84C12 0%, transparent 60%),
+        radial-gradient(ellipse 70% 70% at 80% 80%, #C9A84C0c 0%, transparent 60%),
+        radial-gradient(ellipse 50% 40% at 50% 50%, #C9A84C06 0%, transparent 70%);
+      animation: bgPulse 8s ease-in-out infinite alternate;
+    }
+    body::after {
+      content: '';
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image:
+        radial-gradient(circle, #C9A84C18 1px, transparent 1px),
+        radial-gradient(circle, #C9A84C08 1.5px, transparent 1.5px);
+      background-size: 45px 45px, 90px 90px;
+      background-position: 0 0, 22px 22px;
+      animation: bgDots 30s linear infinite;
+      opacity: 0.5;
+    }
+    @keyframes bgPulse {
+      0%   { opacity: 0.5; transform: scale(1) rotate(0deg); }
+      50%  { opacity: 0.9; transform: scale(1.04) rotate(1deg); }
+      100% { opacity: 0.6; transform: scale(1.08) rotate(-1deg); }
+    }
+    @keyframes bgDots {
+      from { background-position: 0 0, 22px 22px; }
+      to   { background-position: 45px 45px, 67px 67px; }
+    }
+
+    /* ── FLOATING PARTICLES CANVAS ── */
+    #bgCanvas {
+      position: fixed; inset: 0; z-index: 0;
+      pointer-events: none; opacity: 0.7;
+    }
+    /* كل العناصر فوق الخلفية */
+    body > * { position: relative; z-index: 1; }
+
+    /* ── KEYFRAMES ── */
+    @keyframes spin       { to { transform: rotate(360deg); } }
+    @keyframes fadeInDown { from { opacity:0; transform: translateY(-22px);} to { opacity:1; transform: translateY(0); } }
+    @keyframes fadeInUp   { from { opacity:0; transform: translateY(22px); } to { opacity:1; transform: translateY(0); } }
+    @keyframes zoomIn     { from { opacity:0; transform: scale(.85);       } to { opacity:1; transform: scale(1);    } }
+    @keyframes shimmer    {
+      0%,100% { box-shadow: 0 0 0px #C9A84C00; }
+      50%     { box-shadow: 0 0 22px #C9A84C55; }
+    }
+    @keyframes heartbeat  {
+      0%,100% { transform: scale(1); }
+      14%     { transform: scale(1.07); }
+      28%     { transform: scale(1); }
+      42%     { transform: scale(1.04); }
+      70%     { transform: scale(1); }
+    }
+
+    /* بسم الله */
+    .basmala {
+      font-family: 'Amiri', serif;
+      font-size: clamp(1.3rem, 4vw, 1.9rem);
+      color: var(--gold-light);
+      margin-bottom: 36px;
+      opacity: 0;
+      animation: fadeInDown .8s ease .1s forwards;
+    }
+
+    /* الصورة */
+    .photo-wrap {
+      position: relative;
+      width: 170px;
+      height: 170px;
+      margin: 0 auto 32px;
+      opacity: 0;
+      animation: zoomIn .9s cubic-bezier(.34,1.56,.64,1) .35s forwards;
+    }
+
+    .photo-wrap::before {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      background: conic-gradient(var(--gold) 0%, var(--gold-light) 40%, #6b4f1a 60%, var(--gold) 100%);
+      animation: spin 14s linear infinite;
+    }
+
+    .photo-wrap::after {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: 50%;
+      background: var(--dark);
+    }
+
+    .photo-wrap img {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      animation: heartbeat 3.5s ease-in-out 1.5s infinite;
+    }
+
+    /* الاسم */
+    .name {
+      font-family: 'Amiri', serif;
+      font-size: clamp(2rem, 7vw, 3rem);
+      color: var(--gold);
+      margin-bottom: 8px;
+      opacity: 0;
+      animation: fadeInUp .8s ease .6s forwards;
+    }
+
+    .meta {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-bottom: 36px;
+      letter-spacing: 0.04em;
+      opacity: 0;
+      animation: fadeInUp .8s ease .75s forwards;
+    }
+
+    .meta span { margin: 0 8px; }
+
+    /* بطاقة إنا لله */
+    .inna-card {
+      background: var(--dark-card);
+      border: 1px solid #C9A84C30;
+      border-radius: 14px;
+      padding: 18px 32px;
+      display: inline-block;
+      margin-bottom: 28px;
+      max-width: 420px;
+      width: 100%;
+      opacity: 0;
+      animation: fadeInUp .8s ease .9s forwards, shimmer 3s ease 2s infinite;
+    }
+
+    .inna-card p {
+      font-family: 'Amiri', serif;
+      font-size: clamp(1.1rem, 3.5vw, 1.35rem);
+      color: var(--gold-light);
+      line-height: 1.8;
+    }
+
+    /* أزرار */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 13px 30px;
+      border-radius: 50px;
+      font-family: 'Cairo', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      transition: transform .2s, box-shadow .2s, background .2s;
+      opacity: 0;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #b8922e, #dbb84a);
+      color: #0d0d0d;
+      box-shadow: 0 4px 20px #C9A84C40;
+      margin-bottom: 36px;
+      animation: fadeInUp .8s ease 1.1s forwards;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px) scale(1.04);
+      box-shadow: 0 10px 32px #C9A84C66;
+    }
+
+    /* الأزرار السفلية */
+    .bottom-btns {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .btn-outline {
+      background: var(--dark-card);
+      color: var(--gold-light);
+      border: 1px solid #C9A84C55;
+      animation: fadeInUp .8s ease 1.3s forwards;
+    }
+
+    .btn-outline:nth-child(2) { animation-delay: 1.45s; }
+
+    .btn-outline:hover {
+      background: #C9A84C15;
+      border-color: var(--gold);
+      transform: translateY(-3px) scale(1.04);
+    }
+
+    footer {
+      margin-top: 50px;
+      color: var(--text-muted);
+      font-size: 0.78rem;
+      opacity: 0;
+      animation: fadeInUp .8s ease 1.6s forwards;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; opacity: 1 !important; }
+    }
+
+
+    
+    /* ══ BOTTOM NAVBAR ══ */
+    .bottom-nav {
+      position: fixed !important;
+      bottom: 0 !important; left: 0 !important; right: 0 !important;
+      width: 100% !important;
+      z-index: 9999 !important;
+      background: rgba(10,10,13,0.98);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-top: 1px solid #C9A84C44;
+      box-shadow: 0 -6px 30px rgba(0,0,0,0.7);
+      display: flex;
+      flex-direction: column;
+    }
+    .nav-dua-strip {
+      text-align: center;
+      padding: 7px 16px 5px;
+      font-family: 'Amiri', serif;
+      font-size: clamp(0.72rem, 2.2vw, 0.88rem);
+      color: #C9A84C99;
+      border-bottom: 1px solid #C9A84C15;
+      line-height: 1.5;
+    }
+    .nav-tabs {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 6px 0 max(6px, env(safe-area-inset-bottom));
+    }
+    .bottom-nav a {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 2px; text-decoration: none; color: #6b5e4a;
+      font-family: 'Cairo', sans-serif; font-size: 0.68rem;
+      padding: 4px 18px; border-radius: 14px;
+      cursor: pointer !important;
+      transition: color .25s, transform .3s cubic-bezier(.34,1.56,.64,1);
+      position: relative;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    .bottom-nav a .nav-icon {
+      font-size: 1.3rem;
+      transition: transform .35s cubic-bezier(.34,1.56,.64,1), filter .3s;
+      display: block; line-height: 1;
+    }
+    .bottom-nav a.active { color: var(--gold); }
+    .bottom-nav a.active .nav-icon {
+      transform: translateY(-6px) scale(1.25);
+      filter: drop-shadow(0 3px 10px #C9A84Caa);
+    }
+    .bottom-nav a.active::after {
+      content: '';
+      position: absolute; bottom: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 5px; height: 5px; border-radius: 50%;
+      background: var(--gold); box-shadow: 0 0 10px #C9A84Ccc;
+      animation: dotPop .35s cubic-bezier(.34,1.56,.64,1) both;
+    }
+    @keyframes dotPop {
+      from { transform: translateX(-50%) scale(0); opacity: 0; }
+      to   { transform: translateX(-50%) scale(1); opacity: 1; }
+    }
+    .bottom-nav a:not(.active):hover { color: var(--gold-light); }
+    .bottom-nav a:not(.active):hover .nav-icon { transform: translateY(-3px) scale(1.1); }
+    @keyframes navBounce {
+      0%   { transform: translateY(-6px) scale(1.25); }
+      35%  { transform: translateY(0px)  scale(0.9);  }
+      65%  { transform: translateY(-8px) scale(1.3);  }
+      100% { transform: translateY(-6px) scale(1.25); }
+    }
+    .bottom-nav a.nav-bounce .nav-icon {
+      animation: navBounce .42s cubic-bezier(.34,1.56,.64,1) both !important;
+    }
+    body { padding-bottom: 10px !important; }
+    @keyframes pageEnter {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .page-enter { animation: pageEnter .38s cubic-bezier(.22,.68,0,1.1) both; }
+  
+    /* ══ HAMBURGER + SIDEBAR ══ */
+    .hamburger-btn {
+      position: fixed;
+      top: 16px; left: 16px;
+      z-index: 10001;
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      background: rgba(10,10,13,0.92);
+      border: 1px solid #C9A84C44;
+      backdrop-filter: blur(12px);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 5px; cursor: pointer;
+      transition: background .2s, border-color .2s, transform .2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .hamburger-btn:hover { border-color: var(--gold); background: rgba(20,18,10,0.97); }
+    .hamburger-btn.open { transform: rotate(90deg); border-color: var(--gold); }
+    .hamburger-btn span {
+      display: block; width: 20px; height: 2px;
+      background: var(--gold);
+      border-radius: 2px;
+      transition: transform .3s cubic-bezier(.4,0,.2,1), opacity .2s, width .2s;
+    }
+    .hamburger-btn.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .hamburger-btn.open span:nth-child(2) { opacity: 0; width: 0; }
+    .hamburger-btn.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    /* OVERLAY */
+    .sidebar-overlay {
+      position: fixed; inset: 0; z-index: 10000;
+      background: rgba(0,0,0,0.55);
+      backdrop-filter: blur(3px);
+      opacity: 0; pointer-events: none;
+      transition: opacity .3s;
+    }
+    .sidebar-overlay.show { opacity: 1; pointer-events: all; }
+
+    /* SIDEBAR PANEL */
+    .sidebar {
+      position: fixed;
+      top: 0; right: -280px;
+      width: 260px; height: 100%;
+      z-index: 10001;
+      background: rgba(12,13,17,0.98);
+      border-left: 1px solid #C9A84C33;
+      box-shadow: -8px 0 40px rgba(0,0,0,0.7);
+      backdrop-filter: blur(20px);
+      display: flex; flex-direction: column;
+      transition: right .32s cubic-bezier(.4,0,.2,1);
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+    [dir="rtl"] .sidebar { right: auto; left: -280px; border-left: none; border-right: 1px solid #C9A84C33; box-shadow: 8px 0 40px rgba(0,0,0,0.7); }
+    .sidebar.open { right: 0; }
+    [dir="rtl"] .sidebar.open { left: 0; right: auto; }
+
+    .sidebar-header {
+      padding: 24px 20px 16px;
+      border-bottom: 1px solid #C9A84C18;
+      text-align: center;
+    }
+    .sidebar-header .sb-name {
+      font-family: 'Amiri', serif;
+      font-size: 1.2rem; color: var(--gold);
+      margin-bottom: 4px;
+    }
+    .sidebar-header .sb-sub {
+      font-family: 'Amiri', serif;
+      font-size: 0.8rem; color: var(--text-muted);
+    }
+
+    .sidebar-links {
+      flex: 1; padding: 16px 12px;
+      display: flex; flex-direction: column; gap: 6px;
+      overflow-y: auto;
+    }
+    .sb-link {
+      display: flex; align-items: center; gap: 14px;
+      padding: 13px 16px; border-radius: 14px;
+      text-decoration: none; color: var(--text-muted);
+      font-family: 'Cairo', sans-serif; font-size: 0.95rem;
+      transition: background .2s, color .2s, transform .15s;
+      cursor: pointer; border: 1px solid transparent;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .sb-link .sb-icon { font-size: 1.4rem; min-width: 28px; text-align: center; }
+    .sb-link:hover { background: #C9A84C0f; color: var(--gold-light); border-color: #C9A84C22; transform: translateX(-3px); }
+    [dir="rtl"] .sb-link:hover { transform: translateX(3px); }
+    .sb-link.active { background: #C9A84C15; color: var(--gold); border-color: #C9A84C33; font-weight: 600; }
+    .sb-link.active .sb-icon { filter: drop-shadow(0 0 6px #C9A84Caa); }
+
+    .sidebar-footer {
+      padding: 16px 20px 20px;
+      border-top: 1px solid #C9A84C18;
+      text-align: center;
+      font-family: 'Amiri', serif;
+      font-size: 0.78rem; color: #C9A84C66;
+      line-height: 1.7;
+    }
+
+  </style>
+</head>
+<body>
+
+<audio id="bgAudio" loop>
+  <source src="bg.mp4" type="video/mp4">
+</audio>
+
+<canvas id="bgCanvas"></canvas>
+
+<!-- HAMBURGER BUTTON -->
+<button class="hamburger-btn" id="hamburgerBtn" aria-label="القائمة">
+  <span></span><span></span><span></span>
+</button>
+
+<!-- OVERLAY -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="sb-name">🕌 صبحي عبدالله</div>
+    <div class="sb-sub">رحمه الله — صدقة جارية</div>
+  </div>
+  <div class="sidebar-links">
+    <a class="sb-link" data-href="index.html"><span class="sb-icon">🏠</span>الرئيسية</a>
+    <a class="sb-link" data-href="athkar.html"><span class="sb-icon">🤲</span>الدعاء</a>
+    <a class="sb-link" data-href="athkar.html#athkar"><span class="sb-icon">🌙</span>الأذكار</a>
+    <a class="sb-link" data-href="tasbeh.html"><span class="sb-icon">📿</span>المسبحة</a>
+    <a class="sb-link" data-href="quran.html"><span class="sb-icon">📖</span>القرآن الكريم</a>
+  </div>
+  <div class="sidebar-footer">
+    اللهم اجعل هذا الموقع<br>صدقة جارية تنفعه 🤍
+  </div>
+</aside>
+
+
+  <p class="basmala">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</p>
+
+  <div class="photo-wrap">
+    <img src="sobhi.jpeg" alt="صبحي عبدالله" />
+  </div>
+
+  <h1 class="name">فقيد الشباب صبحي عبدالله</h1>
+  <p class="meta">رحمه الله <span>|</span> 16 يونيو 2026</p>
+
+  <div class="inna-card">
+    <p>﴿ إِنَّا لِلَّهِ وَإِنَّا إِلَيْهِ رَاجِعُونَ ﴾</p>
+  </div>
+
+
+
+  <footer>اللهم اجعل هذا الموقع صدقة جارية تنفعه يوم لا ينفع مال ولا بنون</footer>
+
+  <!-- BOTTOM NAVBAR -->
+  <nav class="bottom-nav">
+    <div class="nav-dua-strip">اللهم اغفر لصبحي وارحمه واسكنه الفردوس الأعلى من الجنة 🤍</div>
+    <div class="nav-tabs">
+      <a data-href="index.html" class="active">
+        <span class="nav-icon">🏠</span>الرئيسية
+      </a>
+      <a data-href="athkar.html">
+        <span class="nav-icon">🤲</span>الدعاء
+      </a>
+      <a data-href="athkar.html#athkar">
+        <span class="nav-icon">🌙</span>الأذكار
+      </a>
+      <a data-href="tasbeh.html">
+        <span class="nav-icon">📿</span>المسبحة
+      </a>
+      <a data-href="quran.html">
+        <span class="nav-icon">📖</span>القرآن
+      </a>
+    </div>
+  </nav>
+  <script>
+    document.body.classList.add('page-enter');
+    document.querySelectorAll('.bottom-nav a[data-href]').forEach(function(link) {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        var href = this.dataset.href;
+        this.classList.add('nav-bounce');
+        var self = this;
+        setTimeout(function(){ self.classList.remove('nav-bounce'); }, 430);
+        if (this.classList.contains('active') && href.indexOf('#') === -1) return;
+        document.querySelectorAll('.bottom-nav a').forEach(function(l){ l.classList.remove('active'); });
+        this.classList.add('active');
+        document.body.style.transition = 'opacity .22s ease, transform .22s ease';
+        document.body.style.opacity = '0';
+        document.body.style.transform = 'translateY(-12px)';
+        setTimeout(function(){ window.location.href = href; }, 240);
+      });
+    });
+  </script>
+
+<script>
+
+  // ── SIDEBAR ──
+  (function() {
+    var btn      = document.getElementById('hamburgerBtn');
+    var overlay  = document.getElementById('sidebarOverlay');
+    var sidebar  = document.getElementById('sidebar');
+
+    function openSidebar() {
+      sidebar.classList.add('open');
+      overlay.classList.add('show');
+      btn.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeSidebar() {
+      sidebar.classList.remove('open');
+      overlay.classList.remove('show');
+      btn.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    btn.addEventListener('click', function() {
+      sidebar.classList.contains('open') ? closeSidebar() : openSidebar();
+    });
+    overlay.addEventListener('click', closeSidebar);
+
+    // Mark active link
+    var cur = window.location.pathname.split('/').pop() || 'index.html';
+    var hash = window.location.hash;
+    sidebar.querySelectorAll('.sb-link[data-href]').forEach(function(l) {
+      var href = l.dataset.href;
+      if (href === cur || href === cur + hash || (hash && href === hash)) {
+        l.classList.add('active');
+      }
+    });
+
+    // Nav clicks
+    sidebar.querySelectorAll('.sb-link[data-href]').forEach(function(link) {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        var href = this.dataset.href;
+        closeSidebar();
+        setTimeout(function() { window.location.href = href; }, 260);
+      });
+    });
+  })();
+
+</script>
+<script>
+// ── FLOATING PARTICLES ANIMATION ──
+(function() {
+  var canvas = document.getElementById('bgCanvas');
+  var ctx = canvas.getContext('2d');
+  var W, H, particles = [], stars = [];
+
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  // Create stars (static tiny dots)
+  for (var i = 0; i < 80; i++) {
+    stars.push({
+      x: Math.random(),
+      y: Math.random(),
+      r: Math.random() * 1.2 + 0.2,
+      a: Math.random() * 0.5 + 0.1,
+      speed: Math.random() * 0.008 + 0.003,
+      phase: Math.random() * Math.PI * 2
+    });
+  }
+
+  // Create floating particles (larger, golden)
+  function makeParticle() {
+    return {
+      x: Math.random() * W,
+      y: H + 20,
+      r: Math.random() * 3 + 1,
+      vx: (Math.random() - 0.5) * 0.5,
+      vy: -(Math.random() * 0.8 + 0.3),
+      life: 1,
+      decay: Math.random() * 0.003 + 0.001,
+      type: Math.random() < 0.3 ? 'star' : 'dot'
+    };
+  }
+
+  for (var j = 0; j < 25; j++) {
+    var p = makeParticle();
+    p.y = Math.random() * H;
+    p.life = Math.random();
+    particles.push(p);
+  }
+
+  var t = 0;
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    t += 0.012;
+
+    // Draw twinkling stars
+    stars.forEach(function(s) {
+      var alpha = s.a * (0.5 + 0.5 * Math.sin(t * s.speed * 60 + s.phase));
+      ctx.beginPath();
+      ctx.arc(s.x * W, s.y * H, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(201,168,76,' + alpha + ')';
+      ctx.fill();
+    });
+
+    // Draw rising particles
+    particles.forEach(function(p, i) {
+      p.x += p.vx + Math.sin(t + i) * 0.3;
+      p.y += p.vy;
+      p.life -= p.decay;
+
+      if (p.life <= 0 || p.y < -20) {
+        particles[i] = makeParticle();
+        return;
+      }
+
+      var alpha = p.life * 0.7;
+      if (p.type === 'star') {
+        // Draw a small 4-point star
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(t * 0.5 + i);
+        ctx.beginPath();
+        for (var k = 0; k < 4; k++) {
+          var a1 = (k / 4) * Math.PI * 2;
+          var a2 = a1 + Math.PI / 4;
+          ctx.lineTo(Math.cos(a1) * p.r * 2.5, Math.sin(a1) * p.r * 2.5);
+          ctx.lineTo(Math.cos(a2) * p.r * 0.8, Math.sin(a2) * p.r * 0.8);
+        }
+        ctx.closePath();
+        ctx.fillStyle = 'rgba(232,208,138,' + alpha + ')';
+        ctx.fill();
+        ctx.restore();
+      } else {
+        // Glowing dot
+        var grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 3);
+        grad.addColorStop(0, 'rgba(232,208,138,' + alpha + ')');
+        grad.addColorStop(0.5, 'rgba(201,168,76,' + (alpha * 0.5) + ')');
+        grad.addColorStop(1, 'rgba(201,168,76,0)');
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r * 3, 0, Math.PI * 2);
+        ctx.fillStyle = grad;
+        ctx.fill();
+      }
+    });
+
+    // Subtle light rays from center-top
+    for (var r = 0; r < 3; r++) {
+      var rayAlpha = 0.03 + 0.02 * Math.sin(t * 0.7 + r * 2);
+      var grad2 = ctx.createLinearGradient(W/2, 0, W/2 + (r-1)*W*0.3, H*0.6);
+      grad2.addColorStop(0, 'rgba(201,168,76,' + rayAlpha + ')');
+      grad2.addColorStop(1, 'rgba(201,168,76,0)');
+      ctx.beginPath();
+      ctx.moveTo(W/2, 0);
+      ctx.lineTo(W/2 + (r-1)*W*0.4 - 40, H*0.6);
+      ctx.lineTo(W/2 + (r-1)*W*0.4 + 40, H*0.6);
+      ctx.closePath();
+      ctx.fillStyle = grad2;
+      ctx.fill();
+    }
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+</script>
+<script>
+// ── BACKGROUND AUDIO ──
+(function() {
+  var audio = document.getElementById('bgAudio');
+  var played = false;
+
+  function tryPlay() {
+    if (played) return;
+    audio.volume = 0.4;
+    audio.play().then(function() {
+      played = true;
+    }).catch(function() {});
+  }
+
+  // Try immediately (works in some browsers)
+  tryPlay();
+
+  // Fallback: play on first interaction
+  ['click','touchstart','keydown','scroll'].forEach(function(ev) {
+    document.addEventListener(ev, tryPlay, { once: true });
+  });
+})();
+</script>
+</body>
+</html>
